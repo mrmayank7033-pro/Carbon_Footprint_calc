@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carbon Footprint Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon" aria-hidden="true">🌿</span>
+      <span class="logo-text">EcoTrack</span>
+    </div>
+    <p class="tagline">Measure your daily impact. Act with clarity.</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel inputs-panel" aria-labelledby="inputs-heading">
+      <h2 id="inputs-heading" class="panel-title">Your daily habits</h2>
+
+      <form id="footprint-form" class="footprint-form" novalidate>
+        <fieldset class="input-group">
+          <legend class="group-label">
+            <span class="group-icon" aria-hidden="true">🍽</span>
+            Diet
+          </legend>
+          <label class="field">
+            <span class="field-label">Primary diet style</span>
+            <select id="diet-type" name="dietType">
+              <option value="vegan">Vegan (plant-based)</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="pescatarian">Pescatarian</option>
+              <option value="low-meat">Low meat (1–2 meat meals/week)</option>
+              <option value="average" selected>Average mixed diet</option>
+              <option value="high-meat">High meat (daily red meat)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">Food waste level</span>
+            <select id="food-waste" name="foodWaste">
+              <option value="minimal">Minimal — compost & plan meals</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="high">High — frequent spoilage / takeout waste</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="input-group">
+          <legend class="group-label">
+            <span class="group-icon" aria-hidden="true">🚗</span>
+            Transportation
+          </legend>
+          <label class="field">
+            <span class="field-label">Primary commute mode</span>
+            <select id="transport-mode" name="transportMode">
+              <option value="walk">Walking / cycling</option>
+              <option value="transit">Public transit (bus / metro)</option>
+              <option value="train">Train / commuter rail</option>
+              <option value="ev">Electric car</option>
+              <option value="hybrid">Hybrid car</option>
+              <option value="gas-car" selected>Gasoline car</option>
+              <option value="motorcycle">Motorcycle / scooter</option>
+              <option value="rideshare">Rideshare / taxi</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">Daily distance traveled</span>
+            <div class="range-row">
+              <input type="range" id="commute-distance" name="commuteDistance" min="0" max="150" value="25" step="1" />
+              <output id="commute-distance-value" for="commute-distance">25</output>
+              <span class="unit">km</span>
+            </div>
+          </label>
+          <label class="field">
+            <span class="field-label">Flights this month</span>
+            <select id="flights" name="flights">
+              <option value="0" selected>None</option>
+              <option value="1">1 short-haul (&lt; 3 hr)</option>
+              <option value="2">2 short-haul</option>
+              <option value="1-long">1 long-haul (&gt; 6 hr)</option>
+              <option value="2-long">2+ long-haul</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="input-group">
+          <legend class="group-label">
+            <span class="group-icon" aria-hidden="true">⚡</span>
+            Energy usage
+          </legend>
+          <label class="field">
+            <span class="field-label">Household electricity (kWh / day)</span>
+            <div class="range-row">
+              <input type="range" id="electricity" name="electricity" min="0" max="80" value="12" step="1" />
+              <output id="electricity-value" for="electricity">12</output>
+              <span class="unit">kWh</span>
+            </div>
+            <span class="field-hint">US average home ≈ 30 kWh/day; efficient ≈ 10–15</span>
+          </label>
+          <label class="field">
+            <span class="field-label">Natural gas (therms / day)</span>
+            <div class="range-row">
+              <input type="range" id="gas" name="gas" min="0" max="5" value="0.8" step="0.1" />
+              <output id="gas-value" for="gas">0.8</output>
+              <span class="unit">therms</span>
+            </div>
+          </label>
+          <label class="field checkbox-field">
+            <input type="checkbox" id="renewable" name="renewable" />
+            <span>My electricity is 100% renewable (solar, wind, green tariff)</span>
+          </label>
+        </fieldset>
+
+        <button type="button" id="reset-btn" class="btn-secondary">Reset to defaults</button>
+      </form>
+    </section>
+
+    <section class="panel results-panel" aria-labelledby="results-heading">
+      <h2 id="results-heading" class="panel-title">Today's footprint</h2>
+
+      <div class="total-card" role="status" aria-live="polite">
+        <p class="total-label">Estimated daily CO₂e</p>
+        <p class="total-value">
+          <span id="total-kg">0.0</span>
+          <span class="total-unit">kg</span>
+        </p>
+        <p class="total-compare" id="total-compare"></p>
+        <div class="benchmark-bar" aria-hidden="true">
+          <div class="benchmark-fill" id="benchmark-fill"></div>
+          <span class="benchmark-low">Low</span>
+          <span class="benchmark-high">High</span>
+        </div>
+        <p class="benchmark-caption">Compared to a sustainable target of ~10 kg/day</p>
+      </div>
+
+      <div class="breakdown">
+        <h3 class="breakdown-title">Breakdown</h3>
+        <div class="breakdown-bars" id="breakdown-bars"></div>
+        <ul class="breakdown-legend" id="breakdown-legend"></ul>
+      </div>
+
+      <div class="tips-section">
+        <h3 class="tips-title">
+          <span aria-hidden="true">💡</span>
+          Personalized tips
+        </h3>
+        <ul class="tips-list" id="tips-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Emission factors are approximate averages (kg CO₂e). Sources: EPA, IPCC, EEA lifestyle studies. For education — not a certified carbon audit.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
